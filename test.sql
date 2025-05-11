@@ -1,0 +1,52 @@
+SELECT * FROM CLIENTES;
+
+-- Todos los movimientos con su descripcion de tipo
+SELECT IdMovimiento, Ci, NumeroDeCuenta, movimientos.Tipo, Descripcion, Monto, Fecha, Ref FROM MOVIMIENTOS
+ JOIN OPERACIONES ON MOVIMIENTOS.Tipo = OPERACIONES.Tipo;
+
+SELECT * FROM CUENTAS;
+SELECT * FROM MONEDAS;
+SELECT * FROM OPERACIONES;
+SELECT * FROM SALDOS_CLIENTE_MONEDA;
+SELECT * FROM CUENTA_MONEDA;
+SELECT * FROM AUDITORIA;
+
+CALL calcularSaldosPorClienteMoneda('12345678');
+CALL calcularSaldosPorClienteMoneda('33445566');
+CALL calcularSaldosPorClienteMoneda('66778899');
+CALL realizarMovimiento('000014938274', 1, 5000.00); -- DEPOSITO
+CALL realizarMovimiento('002008473621', 1, 155.07); -- DEPOSITO
+CALL realizarMovimiento('003001237890', 1, 760.30); -- DEPOSITO
+CALL realizarMovimiento('000014938274', 2, 5000.00); -- RETIRO
+CALL realizarMovimiento('001075309122', 2, 100); -- RETIRO
+CALL realizarMovimiento('003009483726', 2, 250.00); -- RETIRO
+CALL transferenciaEntreCuentas('000014938274', '000010054890', 15000);
+CALL transferenciaEntreCuentas('002005983124', '003009876543', 200);
+CALL transferenciaEntreCuentas('000018921745', '000085647381', 238);
+CALL transferenciaEntreCuentas('002385920167', '003001237890', 300);
+CALL transferenciaEntreCuentas('000017850023', '002008473621', 2500.25);
+
+-- SIN FONDOS
+CALL transferenciaEntreCuentas('000014938274', '000053214789', 15000);
+CALL transferenciaEntreCuentas('000017850023', '002008473621', 15000);
+
+-- CRUCE DE MONEDA
+CALL transferenciaEntreCuentas('002003726154', '000053214789', 200);
+CALL transferenciaEntreCuentas('000032587410', '003009483726', 100);
+
+-- REGISTRO AUDITORIA
+DELETE FROM CUENTAS
+WHERE NumeroDeCuenta = '000014938274';
+
+-- DOBLE REGISTRO PARA MISMA CUENTA
+DELETE FROM CUENTAS
+WHERE NumeroDeCuenta = '000014938274';
+
+DELETE FROM CUENTAS
+WHERE NumeroDeCuenta = '000010054890';
+
+DELETE FROM CUENTAS
+WHERE NumeroDeCuenta = '002008473621';
+
+DELETE FROM CUENTAS
+WHERE NumeroDeCuenta = '003009876543';
